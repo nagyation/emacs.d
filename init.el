@@ -96,6 +96,21 @@
 ;; Customize Style & look and feel
 (load-theme 'dracula)
 (set-frame-font "Source Code Pro 14" nil t)
+;;====================Look and Feel=====================================
+(load-theme 'gruvbox-dark-hard t)
+(set-frame-font "Hack 12" nil t)
+;gui remove bars etc..
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(tooltip-mode -1)
+(tool-bar-mode -1)
+;; power line customization
+(add-to-list 'load-path "~/.emacs.d/vendor/emacs-powerline")
+(require 'powerline)
+(setq powerline-arrow-shape 'arrow)
+(custom-set-faces
+ '(mode-line ((t (:foreground "Black" :background "#cf6e00" :box nil)))) ;; very dark orange suits the theme
+ )
 
 (provide 'init)
 ;;; init.el ends here
