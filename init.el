@@ -18,6 +18,7 @@
 		     company-c-headers
 		     gruvbox-theme
 		     dumb-jump
+		     highlight-parentheses
 		     ;; org-trello
 		     ))
 
@@ -139,6 +140,9 @@
 
 
 ;;====================Look and Feel=====================================
+(require 'highlight-parentheses) ;; highlighting
+(highlight-parentheses-mode t)
+
 (load-theme 'gruvbox-dark-hard t)
 (set-frame-font "Hack 12" nil t)
 ;gui remove bars etc..
@@ -156,5 +160,3 @@
 
 (provide 'init)
 ;;; init.el ends here
-
-
