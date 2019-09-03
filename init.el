@@ -124,6 +124,15 @@
 	  (lambda ()
 	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)))
 
+;; dump jump configs
+
+(dumb-jump-mode)
+
+
+;;======================ORG Mode Configs=================================
+;; (require 'org-trello)
+
+
 ;;=====================General Key Mapping==============================
 
 (global-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)
