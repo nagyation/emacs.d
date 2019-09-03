@@ -117,6 +117,13 @@
 
 ;; (add-hook 'c-mode-hook 'cc-mode-compile)
 ;; (add-hook 'c++-mode-hook 'cc-mode-compile)
+(add-hook 'c-mode-hook
+	  (lambda ()
+	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)))
+(add-hook 'c++-mode-hook
+	  (lambda ()
+	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)))
+
 ;;=====================General Key Mapping==============================
 
 (global-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)
