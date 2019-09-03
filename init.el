@@ -117,6 +117,11 @@
 
 ;; (add-hook 'c-mode-hook 'cc-mode-compile)
 ;; (add-hook 'c++-mode-hook 'cc-mode-compile)
+;;=====================General Key Mapping==============================
+
+(global-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)
+
+
 ;;====================Look and Feel=====================================
 (load-theme 'gruvbox-dark-hard t)
 (set-frame-font "Hack 12" nil t)
