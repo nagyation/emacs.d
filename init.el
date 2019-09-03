@@ -93,9 +93,30 @@
 
 (global-set-key (kbd "C-x g") 'magit-status)
 
-;; Customize Style & look and feel
-(load-theme 'dracula)
-(set-frame-font "Source Code Pro 14" nil t)
+;; C level makefile config
+;; (setq cc-mode-compile-make-command "make")
+;; (setq cc-mode-compile-flash-command "make flash")
+;; (setq cc-mode-compile-clean-command "make clean")
+
+;; (defun cc-mode-compile-make ()
+;;   (interactive)
+;;   (setq compile-command cc-mode-compile-make-command)
+;;   (call-interactively 'compile))
+;; (defun cc-mode-compile-flash ()
+;;   (interactive)
+;;   (setq compile-command cc-mode-compile-flash-command)
+;;   (call-interactively 'compile))
+;; (defun cc-mode-compile-clean ()
+;;   (interactive)
+;;   (setq compile-command cc-mode-compile-clean-command)
+;;   (call-interactively 'compile))
+;; (defun cc-mode-compile ()
+;;   (local-set-key (kbd "C-x C m") 'cc-mode-compile-make)
+;;   (local-set-key (kbd "C-x C f") 'cc-mode-compile-flash)
+;;   (local-set-key (kbd "C-x C c") 'cc-mode-compile-clean))
+
+;; (add-hook 'c-mode-hook 'cc-mode-compile)
+;; (add-hook 'c++-mode-hook 'cc-mode-compile)
 ;;====================Look and Feel=====================================
 (load-theme 'gruvbox-dark-hard t)
 (set-frame-font "Hack 12" nil t)
