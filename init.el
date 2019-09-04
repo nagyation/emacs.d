@@ -157,7 +157,7 @@
 
 ;;====================Look and Feel=====================================
 (require 'highlight-parentheses) ;; highlighting
-(highlight-parentheses-mode t)
+(global-highlight-parentheses-mode)
 
 (load-theme 'gruvbox-dark-hard t)
 (set-frame-font "Hack 12" nil t)
