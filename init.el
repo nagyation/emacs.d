@@ -20,6 +20,8 @@
 		     dumb-jump
 		     highlight-parentheses
 		     neotree
+		     cyphejor
+		     diminish
 		     ;; org-trello
 		     ))
 
@@ -172,6 +174,41 @@
 (setq powerline-arrow-shape 'arrow)
 (custom-set-faces
  '(mode-line ((t (:foreground "Black" :background "#cf6e00" :box nil)))))
+
+
+;;  shrink mode names using cyphejor
+
+(require 'cyphejor)
+(setq
+ cyphejor-rules
+ '(:upcase
+   ("bookmark"    "→")
+   ("buffer"      "β")
+   ("diff"        "Δ")
+   ("dired"       "δ")
+   ("emacs"       "ε")
+   ("inferior"    "i" :prefix)
+   ("interaction" "i" :prefix)
+   ("interactive" "i" :prefix)
+   ("lisp"        "λ" :postfix)
+   ("menu"        "▤" :postfix)
+   ("mode"        "")
+   ("package"     "↓")
+   ("python"      "π")
+   ("shell"       "sh" :postfix)
+   ("text"        "ξ")
+   ("wdired"      "↯δ")
+   ))
+
+(cyphejor-mode 1)
+
+(require 'diminish)
+(diminish 'projectile-mode "p")
+(diminish 'flycheck-mode "fc")
+(diminish 'company-mode)
+(diminish 'helm-mode)
+(diminish 'helm-gtags-mode)
+(diminish 'abbrev-mode "Abv")
 
 (provide 'init)
 ;;; init.el ends here
