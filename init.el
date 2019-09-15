@@ -149,8 +149,31 @@
 (global-set-key [f9] 'neotree-project-dir)
 
 ;;======================ORG Mode Configs=================================
-;; (require 'org-trello)
 
+(require 'org-trello)
+;; Disable the splash screen (to enable it agin, replace the t with 0)
+(setq inhibit-splash-screen t)
+
+;; Enable transient mark mode
+(transient-mark-mode 1)
+
+;;;;Org mode configuration
+;; Enable Org mode
+(require 'org)
+;; Make Org mode work with files ending in .org
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+;; The above is the default in recent emacsen
+
+(setq org-todo-keywords 
+      '((sequence "TODO" "DOING" "BLOCKED" "REVIEW" "|" "DONE" "ARCHIVED")))
+
+(setq org-todo-keyword-faces
+  '(("TODO" . org-warning)
+   ("DOING" . "yellow")
+   ("BLOCKED" . "red")
+   ("REVIEW" . "orange")
+   ("DONE" . "green")
+   ("ARCHIVED" .  "blue")))
 
 ;;=====================General Key Mapping==============================
 
