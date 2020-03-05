@@ -22,7 +22,10 @@
 		     neotree
 		     cyphejor
 		     diminish
-		     ;; org-trello
+		     auto-complete
+		     highlight-doxygen
+		     org-trello
+                     switch-window
 		     ))
 
 ;; activate all the packages
@@ -123,11 +126,15 @@
 ;; (add-hook 'c++-mode-hook 'cc-mode-compile)
 (add-hook 'c-mode-hook
 	  (lambda ()
-	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)))
+	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)
+	    (local-unset-key (kbd "C-t"))))
 (add-hook 'c++-mode-hook
 	  (lambda ()
 	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)))
 
+(setq c-default-style "linux"
+      c-basic-offset 4)
+(setq-default indent-tabs-mode nil)
 ;; dump jump configs
 
 (dumb-jump-mode)
@@ -147,6 +154,30 @@
 	      (neotree-find file-name)))
       (message "Could not find git project root."))))
 (global-set-key [f9] 'neotree-project-dir)
+
+;; Auto complete configs
+
+(require 'auto-complete)
+(ac-config-default)
+(global-company-mode)
+
+
+;; Highlighting Doxgyen
+
+(highlight-doxygen-global-mode 1)
+
+
+;; switch window
+
+(require 'switch-window)
+(global-set-key (kbd "C-x o") 'switch-window)
+(global-set-key (kbd "C-x <up>") 'switch-window-mvborder-up)
+(global-set-key (kbd "C-x <down>") 'switch-window-mvborder-down)
+(global-set-key (kbd "C-x <left>") 'switch-window-mvborder-left)
+(global-set-key (kbd "C-x <right>") 'switch-window-mvborder-right)
+(setq switch-window-multiple-frames t)
+(setq switch-window-shortcut-style 'qwerty)
+(setq switch-window-qwerty-shortcuts '("a" "o" "e" "u" "h" "t" "n" "s" "-" "i" "d" "q"))
 
 ;;======================ORG Mode Configs=================================
 
@@ -175,15 +206,40 @@
    ("DONE" . "green")
    ("ARCHIVED" .  "blue")))
 
+
+;;=====================Custom Functions=================================
+
+;; move line up&down
+(defun move-line-up ()
+  "Move up the current line."
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+(defun move-line-down ()
+  "Move down the current line."
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+
+
 ;;=====================General Key Mapping==============================
 
 (global-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-t") 'transpose-chars)
+(global-set-key (kbd "C-x n") 'make-frame)
+(global-set-key [(meta up)]  'move-line-up)
+(global-set-key [(meta down)]  'move-line-down)
 
 
 ;;====================Look and Feel=====================================
 (require 'highlight-parentheses) ;; highlighting
 (global-highlight-parentheses-mode)
-
+(setq visible-bell 1)
 (load-theme 'gruvbox-dark-hard t)
 (set-frame-font "Hack 12" nil t)
 ;gui remove bars etc..
