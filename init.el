@@ -231,12 +231,15 @@
 
 (global-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-t") 'transpose-chars)
-(global-set-key (kbd "C-x n") 'make-frame)
+(global-set-key (kbd "C-x C-n") 'make-frame)
 (global-set-key [(meta up)]  'move-line-up)
 (global-set-key [(meta down)]  'move-line-down)
 
 
 ;;====================Look and Feel=====================================
+(read-only-mode t)
+(add-hook 'find-file-hook (lambda () (setq buffer-read-only t)))
+
 (require 'highlight-parentheses) ;; highlighting
 (global-highlight-parentheses-mode)
 (setq visible-bell 1)
