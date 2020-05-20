@@ -26,6 +26,9 @@
 		     highlight-doxygen
 		     org-trello
                      switch-window
+		     markdown-mode
+                     elpy
+		     py-autopep8
 		     ))
 
 ;; activate all the packages
@@ -57,7 +60,6 @@
 
 ;; helm-gtags
 (require 'helm-gtags)
-;; Enable helm-gtags-mode
 (setq
  helm-gtags-ignore-case t
  helm-gtags-auto-update t
@@ -67,6 +69,7 @@
  helm-gtags-suggested-key-mapping t
  )
 
+;; Enable helm-gtags-mode
 (add-hook 'dired-mode-hook 'helm-gtags-mode)
 (add-hook 'eshell-mode-hook 'helm-gtags-mode)
 (add-hook 'c-mode-hook 'helm-gtags-mode)
@@ -132,9 +135,26 @@
 	  (lambda ()
 	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)))
 
+(setq-default indent-tabs-mode nil)
 (setq c-default-style "linux"
       c-basic-offset 4)
-(setq-default indent-tabs-mode nil)
+
+;;========================= Python Configs ==================================
+(elpy-enable)
+(when (require 'flycheck nil t)
+
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+
+  (add-hook 'elpy-mode-hook 'flycheck-mode))
+
+;; Enable autopep8
+
+(add-hook 'elpy-mode-hook (lambda ()
+                            (add-hook 'before-save-hook
+                                      'elpy-autopep8-fix-code nil t)))
+
+
+
 ;; dump jump configs
 
 (dumb-jump-mode)
@@ -242,7 +262,6 @@
 
 (require 'highlight-parentheses) ;; highlighting
 (global-highlight-parentheses-mode)
-(setq visible-bell 1)
 (load-theme 'gruvbox-dark-hard t)
 (set-frame-font "Hack 12" nil t)
 ;gui remove bars etc..
