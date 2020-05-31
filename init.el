@@ -203,6 +203,9 @@
 (setq switch-window-shortcut-style 'qwerty)
 (setq switch-window-qwerty-shortcuts '("a" "o" "e" "u" "h" "t" "n" "s" "-" "i" "d" "q"))
 
+;; sudo edit
+(require 'sudo-edit)
+
 ;;======================ORG Mode Configs=================================
 
 (require 'org-trello)
@@ -269,7 +272,7 @@
 (require 'highlight-parentheses) ;; highlighting
 (global-highlight-parentheses-mode)
 (load-theme 'gruvbox-dark-hard t)
-(set-frame-font "Hack 12" nil t)
+(set-frame-font "Office Code Pro D 12" nil t)
 ;gui remove bars etc..
 (menu-bar-mode -1)
 (tool-bar-mode -1)
