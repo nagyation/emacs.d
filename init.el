@@ -1,14 +1,14 @@
 ;;; init.el --- Mahmoud Nagy's custom emacs config
 ;;; Commentary:
-;;; Code: .
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-(package-initialize)
+;;; Code:
 
+;; performance optimization
+(setq gc-cons-threshold 100000000)
+
+;; packages handling
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(defvar package-list)
 (setq package-list '(magit
 		     flycheck
 		     helm-gtags
@@ -25,11 +25,12 @@
 		     auto-complete
 		     highlight-doxygen
 		     org-trello
-			 switch-window
+		     switch-window
 		     markdown-mode
-			 elpy
+		     elpy
 		     py-autopep8
-			 flyspell
+		     flyspell
+			 sudo-edit
 		     ))
 
 ;; activate all the packages
@@ -102,6 +103,7 @@
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (setq projectile-project-search-path '("~/workspace/"))
+(setq projectile-switch-project-action 'neotree-projectile-action)
 
 ;;Company mode
 (require 'company)
@@ -113,7 +115,8 @@
 
 (global-set-key (kbd "C-x g") 'magit-status)
 
-;; C level makefile config
+;; C
+(require 'cc-mode)
 ;; (setq cc-mode-compile-make-command "make")
 ;; (setq cc-mode-compile-flash-command "make flash")
 ;; (setq cc-mode-compile-clean-command "make clean")
@@ -137,13 +140,6 @@
 
 ;; (add-hook 'c-mode-hook 'cc-mode-compile)
 ;; (add-hook 'c++-mode-hook 'cc-mode-compile)
-(add-hook 'c-mode-hook
-	  (lambda ()
-	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)))
-(add-hook 'c++-mode-hook
-	  (lambda ()
-	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)))
-
 (setq-default indent-tabs-mode nil)
 (setq c-default-style "linux"
       c-basic-offset 4)
@@ -168,6 +164,7 @@
 
 ;; neo tree configs
 (require 'neotree)
+(setq neo-smart-open t)
 (defun neotree-project-dir ()
   "Open NeoTree using the git root."
   (interactive)
@@ -264,6 +261,8 @@
 
 
 ;;====================Look and Feel=====================================
+(setq custom-file "/dev/null") ;; so far I manually edit emacs, no need for customization
+(load custom-file)
 (read-only-mode t)
 (add-hook 'find-file-hook (lambda () (setq buffer-read-only t)))
 
