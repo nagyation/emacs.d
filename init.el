@@ -30,7 +30,8 @@
 		     elpy
 		     py-autopep8
 		     flyspell
-			 sudo-edit
+                     sudo-edit
+                     yaml-mode
 		     ))
 
 ;; activate all the packages
@@ -157,6 +158,16 @@
 (add-hook 'elpy-mode-hook (lambda ()
                             (add-hook 'before-save-hook
                                       'elpy-autopep8-fix-code nil t)))
+
+
+;; ======================== Yaml Configs =============================
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+
+(add-hook 'yaml-mode-hook
+          '(lambda ()
+             (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+
 
 ;; dump jump configs
 
