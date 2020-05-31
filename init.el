@@ -25,10 +25,11 @@
 		     auto-complete
 		     highlight-doxygen
 		     org-trello
-                     switch-window
+			 switch-window
 		     markdown-mode
-                     elpy
+			 elpy
 		     py-autopep8
+			 flyspell
 		     ))
 
 ;; activate all the packages
@@ -87,7 +88,16 @@
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
+;; FlySpell
+(dolist (hook '(text-mode-hook))
+      (add-hook hook (lambda () (flyspell-mode 1))))
+    (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+(add-hook hook (lambda () (flyspell-mode -1))))
+
+(add-hook 'c-mode-hook (lambda () (flyspell-prog-mode)))
+
 ;; Projectile
+(require 'projectile)
 (projectile-mode +1)
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
@@ -129,8 +139,7 @@
 ;; (add-hook 'c++-mode-hook 'cc-mode-compile)
 (add-hook 'c-mode-hook
 	  (lambda ()
-	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)
-	    (local-unset-key (kbd "C-t"))))
+	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)))
 (add-hook 'c++-mode-hook
 	  (lambda ()
 	    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)))
@@ -152,8 +161,6 @@
 (add-hook 'elpy-mode-hook (lambda ()
                             (add-hook 'before-save-hook
                                       'elpy-autopep8-fix-code nil t)))
-
-
 
 ;; dump jump configs
 
