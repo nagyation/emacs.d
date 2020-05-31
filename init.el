@@ -11,17 +11,16 @@
 (defvar package-list)
 (setq package-list '(magit
 		     flycheck
+                     flycheck-irony
 		     helm-gtags
 		     projectile
 		     helm
-		     company-c-headers
 		     gruvbox-theme
 		     dumb-jump
 		     highlight-parentheses
 		     neotree
 		     cyphejor
 		     diminish
-		     auto-complete
 		     highlight-doxygen
 		     org-trello
 		     switch-window
@@ -31,6 +30,8 @@
 		     flyspell
                      sudo-edit
                      yaml-mode
+                     company-irony
+                     company-irony-c-headers
 		     ))
 
 ;; activate all the packages
@@ -67,7 +68,7 @@
  helm-gtags-auto-update t
  helm-gtags-use-input-at-cursor t
  helm-gtags-pulse-at-cursor t
- helm-gtags-prefix-key "\C-cg"
+ helm-gtags-prefix-key "\C-c"
  helm-gtags-suggested-key-mapping t
  )
 
@@ -88,6 +89,8 @@
 ;; Flycheck configs
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
 
 ;; FlySpell
 (dolist (hook '(text-mode-hook))
@@ -109,7 +112,14 @@
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
 (setq company-backends (delete 'company-semantic company-backends))
-(add-to-list 'company-backends 'company-c-headers)
+(setq company-minimum-prefix-length 2)
+(setq company-selection-wrap-around t)
+(setq company-show-numbers t)
+(setq company-tooltip-align-annotations t)
+
+(eval-after-load 'company
+  '(add-to-list
+    'company-backends '(company-irony-c-headers company-irony)))
 
 ;; Magit
 
@@ -143,7 +153,7 @@
 (setq-default indent-tabs-mode nil)
 (setq c-default-style "linux"
       c-basic-offset 4)
-
+(add-hook 'c-mode-hook #'irony-mode)
 ;;========================= Python Configs ==================================
 (elpy-enable)
 (when (require 'flycheck nil t)
@@ -188,13 +198,6 @@
 	      (neotree-find file-name)))
       (message "Could not find git project root."))))
 (global-set-key [f9] 'neotree-project-dir)
-
-;; Auto complete configs
-
-(require 'auto-complete)
-(ac-config-default)
-(global-company-mode)
-
 
 ;; Highlighting Doxgyen
 
