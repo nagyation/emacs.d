@@ -32,6 +32,7 @@
                      yaml-mode
                      company-irony
                      company-irony-c-headers
+                     disaster
 		     ))
 
 ;; activate all the packages
@@ -154,6 +155,12 @@
 (setq c-default-style "linux"
       c-basic-offset 4)
 (add-hook 'c-mode-hook #'irony-mode)
+
+;; disaster
+
+(require 'disaster)
+(define-key c-mode-base-map (kbd "C-c d") 'disaster)
+
 ;;========================= Python Configs ==================================
 (elpy-enable)
 (when (require 'flycheck nil t)
