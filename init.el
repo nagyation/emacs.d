@@ -54,6 +54,7 @@
 
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-x C-r") 'helm-recentf)
 (define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
 (define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-z") #'helm-select-action)
@@ -92,6 +93,7 @@
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (eval-after-load 'flycheck
   '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 ;; FlySpell
 (dolist (hook '(text-mode-hook))
@@ -290,13 +292,14 @@
 (global-set-key (kbd "C-x C-n") 'make-frame)
 (global-set-key [(meta up)]  'move-line-up)
 (global-set-key [(meta down)]  'move-line-down)
-
+(global-set-key (kbd "C-z") ctl-x-map)
+(global-set-key (kbd "C-h") 'forward-char)
+(global-set-key (kbd "M-h") 'forward-word)
 
 ;;====================Look and Feel=====================================
+
 (setq custom-file "/dev/null") ;; so far I manually edit emacs, no need for customization
 (load custom-file)
-(read-only-mode t)
-(add-hook 'find-file-hook (lambda () (setq buffer-read-only t)))
 
 (require 'highlight-parentheses) ;; highlighting
 (global-highlight-parentheses-mode)
