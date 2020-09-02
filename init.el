@@ -221,6 +221,15 @@
 
 ;;======================ORG Mode Configs=================================
 
+;; plantuml
+;; active Org-babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '(;; other Babel languages
+   (plantuml . t)))
+(setq org-plantuml-jar-path
+      (expand-file-name "~/.emacs.d/vendor/plantuml.jar"))
+
 (require 'org-trello)
 ;; Disable the splash screen (to enable it agin, replace the t with 0)
 (setq inhibit-splash-screen t)
