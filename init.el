@@ -38,6 +38,7 @@
                      camcorder
                      xkcd
                      telega
+                     kdeconnect
                      nyan-mode
                      alarm-clock
                      fancy-battery
@@ -46,13 +47,27 @@
                      srefactor
                      fira-code-mode
                      use-package
+                     which-key
+                     rainbow-delimiters
+                     hydra
+                     undo-tree
+                     mode-line-bell
                      ;; DOOM
                      doom-themes
                      doom-modeline
                      ;; EXWM
                      exwm
                      helm-exwm
+                     ;; search/goto
                      swiper-helm
+                     avy
+                     ;; MAIL GNUS
+                     gnus-desktop-notify
+                     bbdb
+                     dianyou
+                     ;; dired+
+                     image-dired+
+                     dired-narrow
 		     ))
 
 ;; activate all the packages
@@ -67,6 +82,7 @@
   (unless (package-installed-p package)
     (package-install package)))
 
+(add-to-list 'load-path "~/.emacs.d/vendor/")
 
 ;;HELM configuration
 (require 'helm)
@@ -83,9 +99,22 @@
 (helm-mode 1)
 
 
-(require 'swiper-helm)
-(global-set-key (kbd "C-s") 'swiper-helm)
+;; swiper
 
+(require 'swiper-helm)
+(global-set-key (kbd "C-M-s") 'swiper-helm)
+
+;; avy
+
+(require 'avy)
+
+(setq avy-keys '(?a ?o ?e ?u ?h ?t ?n ?s ?i ?d))
+
+(global-set-key (kbd "M-g l") 'avy-goto-line)
+(global-set-key (kbd "M-g w") 'avy-goto-word-1)
+
+;; undo tree
+(require 'undo-tree)
 
 ;; helm-gtags
 (require 'helm-gtags)
@@ -131,12 +160,14 @@
 
 ;; Projectile
 (require 'projectile)
-(projectile-mode +1)
-(setq projectile-indexing-method 'alien)
+(setq projectile-indexing-method 'hybrid)
+(setq projectile-switch-project-action #'projectile-find-dir)
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (setq projectile-project-search-path '("~/workspace/"))
 (setq projectile-use-git-grep t)
+(setq projectile-find-dir-includes-top-level t)
+(projectile-mode +1)
 
 (require 'helm-projectile)
 (helm-projectile-on)
@@ -157,6 +188,13 @@
 ;; Magit
 
 (global-set-key (kbd "C-x g") 'magit-status)
+
+;; EPG passphrase
+(use-package epg
+  :defer t
+  :config
+  ;; Let Emacs query the passphrase through the minibuffer
+  (setq epg-pinentry-mode 'loopback))
 
 ;; C
 (require 'cc-mode)
@@ -243,6 +281,19 @@
 
 (highlight-doxygen-global-mode 1)
 
+;; dired+
+
+(eval-after-load 'dired '(require 'dired+))
+
+;; dired-narrow
+
+(require 'dired-narrow)
+
+;; image-dired+
+
+(require 'image-dired+)
+(eval-after-load 'image-dired+ '(image-diredx-async-mode 1))
+(eval-after-load 'image-dired+ '(image-diredx-adjust-mode 1))
 
 ;; switch window
 
@@ -254,7 +305,7 @@
 (global-set-key (kbd "C-x <right>") 'switch-window-mvborder-right)
 (setq switch-window-multiple-frames t)
 (setq switch-window-shortcut-style 'qwerty)
-(setq switch-window-qwerty-shortcuts '("a" "o" "e" "u" "h" "t" "n" "s" "-" "i" "d" "q"))
+(setq switch-window-qwerty-shortcuts '("a" "o" "e" "u" "h" "t" "n" "s" "-" "i" "d" "q" "'" "," "." "c" "r" "l" "p" "y" "g"))
 
 ;; sudo edit
 (require 'sudo-edit)
@@ -272,6 +323,13 @@
                            '(telega-company-botcmd))))
             (company-mode 1)))
 (telega-notifications-mode 1)
+(setq telega-use-images t)
+(setq telega-emoji-use-images t)
+(setq telega-chat-title-emoji-use-images t)
+(setq telega-msg-use-images-in-one-line t)
+
+;; kdeconnect
+(require 'kdeconnect)
 
 ;; fix input
 (require 'fix-input)
@@ -280,7 +338,118 @@
 ;; mail
 (setq user-full-name "Mahmoud Nagy")
 (setq user-mail-address "mnagy1312@gamil.com")
-(setq send-mail-function 'mailclient-send-it)
+
+(setq gnus-select-method
+      '(nnimap "gmail"
+	       (nnimap-address "imap.gmail.com")  ; it could also be imap.googlemail.com if that's your server.
+	       (nnimap-server-port "imaps")
+	       (nnimap-stream ssl)))
+
+(setq smtpmail-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-service 587
+      gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
+
+(setq gnus-message-archive-method '(nnimap "imap.gmail.com")
+      gnus-message-archive-group "[Gmail]/Sent Mail")
+
+(setq send-mail-function		'smtpmail-send-it
+      message-send-mail-function	'smtpmail-send-it)
+
+;; (require 'nnir)
+;; (nnir-search-engine imap)
+;; (add-to-list 'gnus-secondary-select-methods '(nnimap "gmail"
+;; 				 (nnimap-stream ssl)
+;;  				 (nnimap-address "imap.gmail.com")
+;;  				 (nnimap-server-port 993)
+;;  				 (nnir-search-engine imap)))
+;; (add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
+;; (setq nnir-imap-default-search-key "gmail")
+
+(setq gnus-use-cache t)
+
+(require 'gnus-desktop-notify)
+(gnus-demon-add-handler 'gnus-group-get-new-news 2 t)
+(gnus-demon-init)
+(gnus-desktop-notify-mode)
+(gnus-demon-add-scanmail)
+
+(require 'bbdb)
+(setq bbdb/news-auto-create-p t)
+
+;; save emails from mails
+(bbdb-initialize 'gnus 'message)
+(bbdb-mua-auto-update-init 'message) ;; use 'gnus for incoming messages too
+(setq bbdb-mua-auto-update-p 'query) ;; or 'create to create without asking
+
+;; use insert mail from recieved
+(require 'dianyou)
+
+;; import gmail contacts
+(add-to-list 'load-path "~/.emacs.d/vendor/gmail2bbdb/")
+(autoload 'gmail2bbdb-import-file "gmail2bbdb" nil t nil)
+
+;; GNUS HYDRA
+(eval-after-load 'gnus-group
+  '(progn
+     (defhydra hydra-gnus-group (:color blue)
+       "Do?"
+       ("a" gnus-group-list-active "REMOTE groups A A")
+       ("l" gnus-group-list-all-groups "LOCAL groups L")
+       ("c" gnus-topic-catchup-articles "Read all c")
+       ("G" gnus-group-make-nnir-group "Search server G G")
+       ("g" gnus-group-get-new-news "Refresh g")
+       ("s" gnus-group-enter-server-mode "Servers")
+       ("m" gnus-group-new-mail "Compose m OR C-x m")
+       ("#" gnus-topic-mark-topic "mark #")
+       ("q" nil "cancel"))
+     ;; y is not used by default
+     (define-key gnus-group-mode-map "y" 'hydra-gnus-group/body)))
+
+;; gnus-summary-mode
+(eval-after-load 'gnus-sum
+  '(progn
+     (defhydra hydra-gnus-summary (:color blue)
+       "Do?"
+       ("s" gnus-summary-show-thread "Show thread")
+       ("h" gnus-summary-hide-thread "Hide thread")
+       ("n" gnus-summary-insert-new-articles "Refresh / N")
+       ("f" gnus-summary-mail-forward "Forward C-c C-f")
+       ("!" gnus-summary-tick-article-forward "Mail -> disk !")
+       ("p" gnus-summary-put-mark-as-read "Mail <- disk")
+       ("c" gnus-summary-catchup-and-exit "Read all c")
+       ("e" gnus-summary-resend-message-edit "Resend S D e")
+       ("R" gnus-summary-reply-with-original "Reply with original R")
+       ("r" gnus-summary-reply "Reply r")
+       ("W" gnus-summary-wide-reply-with-original "Reply all with original S W")
+       ("w" gnus-summary-wide-reply "Reply all S w")
+       ("#" gnus-topic-mark-topic "mark #")
+       ("q" nil "cancel"))
+     ;; y is not used by default
+     (define-key gnus-summary-mode-map "y" 'hydra-gnus-summary/body)))
+
+;; gnus-article-mode
+(eval-after-load 'gnus-art
+  '(progn
+     (defhydra hydra-gnus-article (:color blue)
+       "Do?"
+       ("f" gnus-summary-mail-forward "Forward")
+       ("R" gnus-article-reply-with-original "Reply with original R")
+       ("r" gnus-article-reply "Reply r")
+       ("W" gnus-article-wide-reply-with-original "Reply all with original S W")
+       ("o" gnus-mime-save-part "Save attachment at point o")
+       ("w" gnus-article-wide-reply "Reply all S w")
+       ("q" nil "cancel"))
+     ;; y is not used by default
+     (define-key gnus-article-mode-map "y" 'hydra-gnus-article/body)))
+
+(eval-after-load 'message
+  '(progn
+     (defhydra hydra-message (:color blue)
+       "Do?"
+       ("ca" mml-attach-file "Attach C-c C-a")
+       ("cc" message-send-and-exit "Send C-c C-c")
+       ("q" nil "cancel"))
+     (global-set-key (kbd "C-c C-y") 'hydra-message/body)))
 
 ;;======================ORG Mode Configs=================================
 
@@ -294,7 +463,7 @@
 (setq org-plantuml-jar-path
       (expand-file-name "~/.emacs.d/vendor/plantuml.jar"))
 
-(require 'org-trello)
+;; (require 'org-trello)
 ;; Disable the splash screen (to enable it agin, replace the t with 0)
 (setq inhibit-splash-screen t)
 
@@ -352,6 +521,16 @@
       (error "No number at point"))
   (replace-match (number-to-string (1- (string-to-number (match-string 0))))))
 
+(defun toggle-window-dedicated ()
+  "Control whether or not Emacs is allowed to display another
+buffer in current window."
+  (interactive)
+  (message
+   (if (let (window (get-buffer-window (current-buffer)))
+         (set-window-dedicated-p window (not (window-dedicated-p window))))
+       "%s: Can't touch this!"
+     "%s is up for grabs.")
+   (current-buffer)))
 
 ;;=====================General Key Mapping==============================
 
@@ -365,111 +544,41 @@
 (global-set-key (kbd "M-h") 'forward-word)
 (global-set-key (kbd "C-c +") 'increment-number-at-point)
 (global-set-key (kbd "C-c -") 'decrement-number-at-point)
-
-
-;;========================EXWM=========================================
-(require 'exwm)
-
-(defun my-exwm-config ()
-  "Default configuration of EXWM."
-  ;; Set the initial workspace number.
-  (unless (get 'exwm-workspace-number 'saved-value)
-    (setq exwm-workspace-number 4))
-  ;; Make class name the buffer name
-  (add-hook 'exwm-update-class-hook
-            (lambda ()
-              (exwm-workspace-rename-buffer exwm-class-name)))
-  ;; Global keybindings.
-  (unless (get 'exwm-input-global-keys 'saved-value)
-    (setq exwm-input-global-keys
-          `(
-            ;; 's-r': Reset (to line-mode).
-            ([?\s-r] . exwm-reset)
-            ;; 's-w': Switch workspace.
-            ([?\s-w] . exwm-workspace-switch)
-            ;; 's-&': Launch application.
-            ([?\s-&] . (lambda (command)
-                         (interactive (list (read-shell-command "$ ")))
-                         (start-process-shell-command command nil command)))
-            (,(kbd "s-i") . exwm-input-toggle-keyboard) ;; Toggle between "line-mode" and "char-mode" in an EXWM window
-            (,(kbd "s-D") . kill-this-buffer)
-            (,(kbd "s-f") . exwm-floating-toggle-floating) ;; Toggle the current window between floating and non-floating states
-            (,(kbd "s-h") . exwm-floating-hide) ;; Toggle the current window between floating and non-floating states
-                        
-            ;; 's-N': Switch to certain workspace.
-            ,@(mapcar (lambda (i)
-                        `(,(kbd (format "s-%d" i)) .
-                          (lambda ()
-                            (interactive)
-                            (exwm-workspace-switch-create ,i))))
-                      (number-sequence 0 9)))))
-  ;; Line-editing shortcuts
-  (unless (get 'exwm-input-simulation-keys 'saved-value)
-    (setq exwm-input-simulation-keys
-          '(([?\C-b] . [left])
-            ([?\C-f] . [right])
-            ([?\C-p] . [up])
-            ([?\C-n] . [down])
-            ([?\C-a] . [home])
-            ([?\C-e] . [end])
-            ([?\M-v] . [prior])
-            ([?\C-v] . [next])
-            ([?\C-d] . [delete])
-            ([?\C-k] . [S-end delete]))))
-  ;; Enable EXWM
-  (setq exwm-layout-show-all-buffers t)
-  (exwm-enable)
-  ;; Configure Ido
-  (exwm-config-ido)
-  ;; ;; Other configurations
-  (exwm-config-misc))
-
-(require 'exwm-systemtray)
-(require 'exwm-config)
-(my-exwm-config)
-(exwm-systemtray-enable)
-
-(require 'exwm-randr)
-(setq exwm-randr-workspace-monitor-plist '(1 "HDMI-1"))
-(add-hook 'exwm-randr-screen-change-hook
-          (lambda ()
-            (start-process-shell-command
-             "xrandr" nil "xrandr --output HDMI-1 --left-of eDP-1 --auto")))
-(exwm-randr-enable)
-
-(add-to-list 'exwm-input-simulation-keys '([?\M-w] . [C-c]))
-(add-to-list 'exwm-input-simulation-keys '([?\C-y] . [C-v]))
-
-(add-hook 'exwm-manage-finish-hook
-          (lambda ()
-            (when (and exwm-class-name
-                       (string= exwm-class-name "qutebrowser"))
-              (call-interactively #'exwm-input-release-keyboard))))
-
-(require 'helm-exwm)
-
-(setq helm-exwm-emacs-buffers-source (helm-exwm-build-emacs-buffers-source))
-(setq helm-exwm-source (helm-exwm-build-source))
-(setq helm-mini-default-sources `(helm-exwm-emacs-buffers-source
-                                  helm-exwm-source
-                                  helm-source-recentf))
+(global-set-key (kbd "C-c f") 'proced)
+(global-set-key (kbd "C-c SPC") 'whitespace-mode)
 
 ;;====================Look and Feel=====================================
 
 (setq custom-file "/dev/null") ;; so far I manually edit emacs, no need for customization
+(put 'narrow-to-region 'disabled nil) ;; narrow
 
 (require 'highlight-parentheses) ;; highlighting
 (global-highlight-parentheses-mode)
 (electric-pair-mode)
-;; (load-theme 'gruvbox-dark-hard  t)
+(load-theme 'gruvbox-dark-hard  t)
+
+;; color all delimiters 
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
 (add-to-list 'default-frame-alist '(font . "Fira Code 12"))
 ;(set-frame-font "Office Code Pro D 12" nil t)
+
+;; key hints
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
 
 ;; gui remove bars etc..
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
 (tool-bar-mode -1)
+
+(require 'mode-line-bell)
+(mode-line-bell-mode)
 
 (add-hook 'after-make-frame-functions
           (lambda (frame)
@@ -487,32 +596,35 @@
   )
 
 ;; mode line
-(require 'doom-modeline)
-(doom-modeline-mode)
-(setq doom-modeline-enable-word-count t)
-(setq doom-modeline-buffer-encoding nil)
+;; (require 'doom-modeline)
+;; (doom-modeline-mode)
+;; (setq doom-modeline-enable-word-count t)
+;; (setq doom-modeline-buffer-encoding nil)
 
-(require 'doom-themes)
-(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-      doom-themes-enable-italic t) ; if nil, italics is universally disabled
-(load-theme 'doom-tomorrow-night t)
+;; (require 'doom-themes)
+;; (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+;;       doom-themes-enable-italic t) ; if nil, italics is universally disabled
+;; (load-theme 'doom-tomorrow-night t)
 
-;; Enable flashing mode-line on errors
-(doom-themes-visual-bell-config)
+;; ;; Enable flashing mode-line on errors
+;; (doom-themes-visual-bell-config)
 
-;; Enable custom neotree theme (all-the-icons must be installed!)
-(doom-themes-neotree-config)
+;; ;; Enable custom neotree theme (all-the-icons must be installed!)
+;; (doom-themes-neotree-config)
 
-;; Corrects (and improves) org-mode's native fontification.
-(doom-themes-org-config)
+;; ;; Corrects (and improves) org-mode's native fontification.
+;; (doom-themes-org-config)
+
+(setq inhibit-startup-screen t)
+(setq initial-major-mode 'org-mode)
 
 (require 'nyan-mode)
 (nyan-mode t)
-(setq nyan-bar-length 18)
-(setq nyan-minimum-window-width 72)
-(display-time-mode t)
-(display-battery-mode t)
-(nyan-toggle-wavy-trail)
+(setq nyan-bar-length 24)
+(setq nyan-minimum-window-width 64)
+;; (display-time-mode t)
+;; (display-battery-mode t)
+;; (nyan-toggle-wavy-trail)
 ;; (nyan-start-animation)
 
 ;;  shrink mode names using cyphejor
@@ -552,6 +664,23 @@
 (diminish 'helm-gtags-mode)
 (diminish 'abbrev-mode "Abv")
 
-(put 'narrow-to-region 'disabled nil)
+;; dashboard
+(require 'dashboard)
+(dashboard-setup-startup-hook)
+
+(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+
+(setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
+;; Set the banner
+(setq dashboard-startup-banner 'logo)
+
+;; Content is not centered by default. To center, set
+(setq dashboard-center-content t)
+(setq dashboard-set-heading-icons t)
+(setq dashboard-set-file-icons t)
+(setq dashboard-set-navigator t)
+
+
 (provide 'init)
 ;;; init.el ends here
+

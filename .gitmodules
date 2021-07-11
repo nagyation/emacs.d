@@ -1,3 +1,6 @@
 [submodule "vendor/emacs-powerline"]
 	path = vendor/emacs-powerline
 	url = https://github.com/jonathanchu/emacs-powerline.git
+[submodule "vendor/gmail2bbdb"]
+	path = vendor/gmail2bbdb
+	url = https://github.com/redguardtoo/gmail2bbdb
