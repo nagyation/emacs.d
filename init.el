@@ -7,6 +7,10 @@
 ;;; use-package docs: https://github.com/jwiegley/use-package
 
 
+;; mac specific
+(when (eq system-type `darwin)
+  (setq mac-command-modifier 'meta))
+
 ;; ========== mode line ==========
 (use-package ivy
   :bind
@@ -286,8 +290,5 @@
 (column-number-mode t)
 (setq mode-line-position (list "%lL %cC"))
 
-;; mac specific
-(when (eq system-type `darwin)
-  (setq mac-command-modifier 'meta))
 
 (message "init is loaded correctly, you are awesome!")
