@@ -77,8 +77,7 @@
 ;; (setq aw-background nil)
 
 (use-package company
-  :hook
-  (after-init-hook . global-company-mode))
+  :init (add-hook 'after-init-hook #'global-company-mode))
 
 
 ;; FlySpell
