@@ -12,8 +12,13 @@
 (setq mawaqit-api-url "https://mawaqit.net/api/2.0/mosque")
 (setq mawaqit-api-search "/search")
 
+(defconst nmawaqit-mode-line-string nil)
+(defvar nmawaqit-timer nil)
+(defvar nmawaqit-api-timer nil)
+
 (setq location-query 'nil)
 (setq prayer-names '("fajr" "shrouq" "zuhr" "asr" "maghrib" "isha"))
+(setq last-prayer-update 'nil)
 
 (defcustom nmawaqit-latlon-values 'nil
   "Set the latitude and Longitude of
@@ -30,7 +35,8 @@ the form of (\"51.071658\" \"13.674561\")"
 (defun check-next-prayer (curtime tprayer)
   (let ((tdiff (+ (* 60 (- (caddr tprayer) (caddr curtime)))
 		  (- (cadr tprayer) (cadr curtime)))))
-    (when (> tdiff 0)
+    (if (< tdiff 0)
+	(+ (* 24 60) tdiff)
       tdiff)))
 
 (defun call-api (url)
@@ -40,28 +46,36 @@ the form of (\"51.071658\" \"13.674561\")"
   (call-api (concat mawaqit-api-url mawaqit-api-search location)))
 
 (defun nmawaqit-get-prayer-times ()
-  (let ((response (parse-json (nmawaqit-search location-query))))
-    (setq prayer-times (assoc-value 'times (car response)))
-    (setq prayer-times
-	  (seq-mapn #'(lambda (a b) (cons a b)) prayer-times prayer-names))))
+  ;; only update prayers when one day has passed from the last values
+  (when (or (not last-prayer-update)
+	    (< (cadddr last-prayer-update)
+	       (cadddr (decode-time (current-time)))))
+    (let ((response (parse-json (nmawaqit-search location-query))))
+      (setq prayer-times (assoc-value 'times (car response)))
+      (setq prayer-times
+	    (seq-mapn #'(lambda (a b) (cons a b)) prayer-times prayer-names)))
+    (setq last-prayer-update (decode-time (current-time)))))
 
 (defun nmawaqit-get-next-prayer ()
   (setq next-prayer 'nil) ;; reset prayer
-  (dolist (prayertime prayer-times next-prayer)
-    (unless next-prayer
+  (let ((duration (* 24 60)))
+    (dolist (prayertime prayer-times next-prayer)
       (setq next-prayer
 	    (let ((diff (check-next-prayer
 			 (decode-time (current-time))
 			 (parse-time-string (car prayertime)))))
-	      (when diff ;; now append time difference to prayer list
-		(cons diff prayertime)))))))
+	      (if (> duration diff)
+		  (progn
+		    (setq duration diff)
+		    (cons diff prayertime)) ;; now append time difference to prayer list
+		next-prayer))))))
 
 (defun nmawaqit-display-color (prayermsg timeleft)
   (if (< timeleft 10)
-      (setq-default mode-line-misc-info (propertize prayermsg 'face '(:foreground "red")))
+      (setq nmawaqit-mode-line-string (propertize prayermsg 'face '(:foreground "red")))
     (if (< timeleft 20)
-	(setq-default mode-line-misc-info (propertize prayermsg 'face '(:foreground "orange")))
-      (setq-default mode-line-misc-info prayermsg))))
+	(setq nmawaqit-mode-line-string (propertize prayermsg 'face '(:foreground "orange")))
+      (setq nmawaqit-mode-line-string prayermsg))))
 
 (defun nmawaqit-display-next-prayer()
   (nmawaqit-get-next-prayer)
@@ -70,9 +84,7 @@ the form of (\"51.071658\" \"13.674561\")"
 			  (car next-prayer)))
 
 
-(setq nmawaqit-latlon-values '("51.071658" "13.674561"))
 (defun nmawaqit-start ()
-  (interactive)
   (unless nmawaqit-latlon-values
     (error "Please set nmawaqit-latlon-values first"))
   (setq location-query (format
@@ -81,18 +93,39 @@ the form of (\"51.071658\" \"13.674561\")"
 			(cadr nmawaqit-latlon-values)))
   (nmawaqit-get-prayer-times)
   (nmawaqit-display-next-prayer)
-  (unless nmawaqit-timer
-    (setq nmawaqit-api-timer (run-with-idle-timer 120 t 'nmawaqit-get-prayer-times)))
   (unless nmawaqit-api-timer
-    (setq nmawaqit-timer (run-with-timer 0 60 'nmawaqit-display-next-prayer))))
+    (setq nmawaqit-api-timer (run-with-idle-timer 30 t #'nmawaqit-get-prayer-times)))
+  (unless nmawaqit-timer
+    (setq nmawaqit-timer (run-at-time nil 60 #'nmawaqit-display-next-prayer))))
 
 (defun nmawaqit-stop ()
-  (interactive)
-  (cancel-timer nmawaqit-timer)
-  (cancel-timer nmawaqit-api-timer)
+  (when nmawaqit-timer
+    (cancel-timer nmawaqit-timer))
+  (when nmawaqit-api-timer
+    (cancel-timer nmawaqit-api-timer))
   (setq nmawaqit-timer 'nil)
   (setq nmawaqit-api-timer 'nil)
-  (setq-default mode-line-misc-info ""))
+  (setq last-prayer-update 'nil)
+  (setq-default mode-line-misc-info 'nil))
+
+
+(define-minor-mode nmawaqit-mode
+  "Show Prayer times in mode line"
+  :global t
+  (setq nmawaqit-mode-line-string "")
+  (unless mode-line-misc-info (setq mode-line-misc-info '("")))
+  (if nmawaqit-mode
+      (progn
+	(add-to-list 'mode-line-misc-info 'nmawaqit-mode-line-string t)
+	(nmawaqit-start)
+	(force-mode-line-update)
+	(message "nmawaqit started"))
+    (progn
+      (setq mode-line-misc-info
+            (delq 'nmawaqit-mode-line-string mode-line-misc-info))
+      (nmawaqit-stop)
+      (message "nmawaqit stopped"))))
+
 
 (provide 'nmawaqit)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -251,15 +251,6 @@
 ;; (semantic-mode 1)
 ;; (require 'stickyfunc-enhance)
 
-;; add own custom modules
-(add-to-list 'load-path "~/.emacs.d/custom/")
-(use-package header2
-  :ensure nil)
-
-(use-package nmawaqit
-  :ensure nil)
-
-
 ;; treesit modes
 
 (use-package treesit
@@ -271,6 +262,19 @@
 	  (c-mode . c-ts-mode)
 	  (c++-mode . c++-ts-mode)
 	  (c-or-c++-mode . c-or-c++-ts-mode))))
+
+
+;; add own custom modules
+(add-to-list 'load-path "~/.emacs.d/custom/")
+(use-package header2
+  :ensure nil)
+
+(use-package nmawaqit
+  :ensure nil
+  :config
+  (setq nmawaqit-latlon-values '("51.071658" "13.674561"))
+  (nmawaqit-mode))
+
 
 (load-if-exists "~/.emacs.d/work.el")
 
