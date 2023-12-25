@@ -80,8 +80,9 @@ the form of (\"51.071658\" \"13.674561\")"
 (defun nmawaqit-display-next-prayer()
   (nmawaqit-get-next-prayer)
   (nmawaqit-display-color (concat (number-to-string (car next-prayer))
-				  "->" (cddr next-prayer) " ")
-			  (car next-prayer)))
+				  "m->" (cddr next-prayer) " ")
+			  (car next-prayer))
+  (when (> 15 (car next-prayer)) (force-mode-line-update)))
 
 
 (defun nmawaqit-start ()
