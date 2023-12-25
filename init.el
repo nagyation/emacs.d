@@ -237,6 +237,13 @@
   (setq magit-save-repository-buffers nil))
 
 
+
+;;clipetty
+(use-package clipetty
+  :unless window-system
+  :config
+  (global-clipetty-mode))
+
 ;; narrow to region
 (put 'narrow-to-region 'disabled nil)
 
