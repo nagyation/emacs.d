@@ -258,6 +258,20 @@
     (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
     (add-hook 'elpy-mode-hook 'flycheck-mode)))
 
+;;; vterm
+
+(use-package vterm
+    :ensure t)
+
+;; auto update package
+
+(use-package auto-package-update
+   :ensure t
+   :config
+   (setq auto-package-update-delete-old-versions t
+	 auto-package-update-prompt-before-update t)
+   (auto-package-update-maybe))
+
 ;; semantic, stickyfunc
 ;; (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
 ;; (semantic-mode 1)
