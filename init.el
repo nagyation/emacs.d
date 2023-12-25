@@ -275,6 +275,20 @@
 	  (c++-mode . c++-ts-mode)
 	  (c-or-c++-mode . c-or-c++-ts-mode))))
 
+;; add arabic keyboard for dvorak
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/arab"))
+
+(register-input-method
+ "arabic-osx" "Arabic-OSX" 'quail-use-package
+ "FOO@" "Arabic OSX method"
+ "arabic-osx-method")
+
+
+;; fix input
+(use-package fix-input
+  :config
+  (fix-input "english-dvorak" "arabic-osx" "arabic-osx-dvorak"))
+
 
 (defun run-non-ts-hooks ()
   (let ((major-name (symbol-name major-mode)))
