@@ -242,6 +242,8 @@
 
 ;; elpy
 (use-package elpy
+  :init
+  (elpy-enable)
   :config
   (setq elpy-rpc-python-command "/usr/bin/python3")
   ;; use flycheck
@@ -266,6 +268,13 @@
 	  (c++-mode . c++-ts-mode)
 	  (c-or-c++-mode . c-or-c++-ts-mode))))
 
+
+(defun run-non-ts-hooks ()
+  (let ((major-name (symbol-name major-mode)))
+    (when (string-match-p ".*-ts-mode" major-name)
+      (run-hooks (intern (concat (replace-regexp-in-string "-ts" "" major-name) "-hook"))))))
+
+(add-hook 'prog-mode-hook 'run-non-ts-hooks)
 
 ;; add own custom modules
 (add-to-list 'load-path "~/.emacs.d/custom/")
