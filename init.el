@@ -322,3 +322,6 @@
 
 
 (message "init is loaded correctly, you are awesome!")
+
+(provide 'init)
+;;; init.el ends here

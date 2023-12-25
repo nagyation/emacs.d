@@ -48,13 +48,13 @@ the form of (\"51.071658\" \"13.674561\")"
 (defun nmawaqit-get-prayer-times ()
   ;; only update prayers when one day has passed from the last values
   (when (or (not last-prayer-update)
-	    (< (cadddr last-prayer-update)
-	       (cadddr (decode-time (current-time)))))
+	    (< (time-to-days last-prayer-update)
+	       (time-to-days (current-time))))
     (let ((response (parse-json (nmawaqit-search location-query))))
       (setq prayer-times (assoc-value 'times (car response)))
       (setq prayer-times
 	    (seq-mapn #'(lambda (a b) (cons a b)) prayer-times prayer-names)))
-    (setq last-prayer-update (decode-time (current-time)))))
+    (setq last-prayer-update (current-time))))
 
 (defun nmawaqit-get-next-prayer ()
   (setq next-prayer 'nil) ;; reset prayer
