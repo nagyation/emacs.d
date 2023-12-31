@@ -39,6 +39,8 @@
   (require 'use-package))
 (setq use-package-always-ensure t)
 
+(use-package diminish)
+
 ;;; Useful Defaults
 (setq-default cursor-type 'bar)           ; Line-style cursor similar to other text editors
 (setq inhibit-startup-screen t)           ; Disable startup screen
@@ -50,6 +52,7 @@
 (delete-selection-mode 1)                 ; Selected text will be overwritten when you start typing
 (global-auto-revert-mode t)               ; Auto-update buffer if file has changed on disk
 (use-package undo-tree                    ; Enable undo-tree, sane undo/redo behavior
+  :diminish (undo-tree-mode . "")
   :init (global-undo-tree-mode))
 (add-hook 'before-save-hook
 	  'delete-trailing-whitespace)    ; Delete trailing whitespace on save
