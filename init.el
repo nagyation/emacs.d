@@ -289,6 +289,30 @@
 	  (c++-mode . c++-ts-mode)
 	  (c-or-c++-mode . c-or-c++-ts-mode))))
 
+(setq treesit-language-source-alist
+   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+     (cmake "https://github.com/uyha/tree-sitter-cmake")
+     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+     (html "https://github.com/tree-sitter/tree-sitter-html")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+     (json "https://github.com/tree-sitter/tree-sitter-json")
+     (make "https://github.com/alemuller/tree-sitter-make")
+     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+     (c "https://github.com/uyha/tree-sitter-c")
+     (cpp "https://github.com/uyha/tree-sitter-cpp")
+     (rust "https://github.com/uyha/tree-sitter-rust")
+     (toml "https://github.com/tree-sitter/tree-sitter-toml")
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+(defun my/install-all-treesit-grammar ()
+  "Install all treesit grammer from treesit-language-source-alist"
+  (interactive)
+  (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist)))
+
 ;; add arabic keyboard for dvorak
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/arab"))
 
