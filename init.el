@@ -13,11 +13,9 @@
 
 ;; ========== mode line ==========
 (use-package ivy
-  :bind
-  (("C-c C-r" . ivy-resume)
-   ("<f6>" . ivy-resume))
+  :diminish (ivy-mode . "")
+  :init (ivy-mode 1) ; globally at startup
   :config
-  (ivy-mode)
   (setq ivy-use-virtual-buffers t)
   (setq enable-recursive-minibuffers t))
 ;; enable this if you want `swiper' to use it
@@ -40,8 +38,10 @@
    ;; ("<f2> u" . counsel-unicode-char)
    ("C-c g" . counsel-git)
    ("C-c j" . counsel-git-grep)
-   ("C-c k" . counsel-ag)
+   ("C-c /" . counsel-ag)
    ("C-x l" . counsel-locate)
+   ("C-c C-r" . ivy-resume)
+   ("<f6>" . ivy-resume)
    :map minibuffer-local-map
    ("C-r" . counsel-minibuffer-history)))
 
@@ -50,8 +50,10 @@
 ;; (fido-mode t)
 ;; (fido-vertical-mode t)
 
-(setq c-default-style "linux"
-          c-basic-offset 8)
+(use-package cc-mode
+  :config
+  (setq c-default-style "linux"
+        c-basic-offset 8))
 
 (use-package avy
   :config
@@ -83,14 +85,15 @@
 (use-package company
   :init (add-hook 'after-init-hook #'global-company-mode))
 
-
 ;; FlySpell
-(dolist (hook '(text-mode-hook))
-      (add-hook hook (lambda () (flyspell-mode 1))))
-    (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
-(add-hook hook (lambda () (flyspell-mode -1))))
-
-(add-hook 'c-ts-mode-hook (lambda () (flyspell-prog-mode)))
+(use-package flyspell
+  :init
+  (dolist (hook '(text-mode-hook))
+    (add-hook hook (lambda () (flyspell-mode 1))))
+  (add-hook 'prog-mode-hook (lambda () (flyspell-prog-mode)))
+  (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell)
+  :config
+  (setq flyspell-issue-message-flag 'nil))
 
 
 ;; flymake-shellcheck
@@ -246,6 +249,10 @@
 
 ;; narrow to region
 (put 'narrow-to-region 'disabled nil)
+
+(use-package flycheck
+  :config
+  (global-flycheck-mode))
 
 ;; elpy
 (use-package elpy
