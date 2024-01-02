@@ -270,6 +270,12 @@
 (use-package vterm
     :ensure t)
 
+(defun terminal (term-name)
+    "enlarge window by 10."
+    (interactive (list (read-string "Enter the name of the terminal: " "term")))
+    (setq term-name (concat "*" term-name "*"))
+    (generate-new-buffer-name term-name)
+    (vterm term-name))
 ;; auto update package
 
 (use-package auto-package-update
