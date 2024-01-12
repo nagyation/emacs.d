@@ -122,6 +122,12 @@
 
 (org-babel-do-load-languages 'org-babel-load-languages '((C . t)))
 
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/worklogs/todo.org" "Tasks")
+         "* TODO %?\n  %i")
+        ("j" "Journal" entry (file+datetree "~/worklogs/journal.org")
+         "* %?\nEntered on %U\n  %i")))
+
 ;; =====================================  Custom Functions =====================================================
 
 (defun move-line-up ()
@@ -234,7 +240,7 @@
 (global-set-key (kbd "C-c p") 'copy-paragraph)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "C-x C-u") 'custom-upcase-char)
-
+(global-set-key (kbd "C-c c") 'org-capture)
 
 ;; magit
 (use-package magit
