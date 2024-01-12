@@ -239,7 +239,10 @@
 ;; magit
 (use-package magit
   :config
-  (setq magit-save-repository-buffers nil))
+  (setq magit-save-repository-buffers nil)
+  (setq magit-blame-goto-chunk-hook   '(magit-blame-maybe-show-message))
+  :bind
+  (("C-c b" . magit-blame)))
 
 
 
