@@ -45,6 +45,8 @@
    :map minibuffer-local-map
    ("C-r" . counsel-minibuffer-history)))
 
+(use-package which-key
+  :init (which-key-mode))
 
 ;; icomplete mode
 ;; (fido-mode t)
