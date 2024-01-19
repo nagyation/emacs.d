@@ -52,10 +52,17 @@
 ;; (fido-mode t)
 ;; (fido-vertical-mode t)
 
+
+;; TODO: Ideally this should be removed
 (use-package cc-mode
   :config
   (setq c-default-style "linux"
         c-basic-offset 8))
+
+(use-package c-ts-mode
+  :config
+  (setq c-ts-mode-indent-style "linux"
+        c-ts-mode-indent-offset 8))
 
 (use-package avy
   :config
