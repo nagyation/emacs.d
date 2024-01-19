@@ -286,7 +286,10 @@
 ;;; vterm
 
 (use-package vterm
-    :ensure t)
+  :ensure t
+  :config
+  (setq vterm-max-scrollback 10000)
+  (setq vterm-kill-buffer-on-exit 'nil))
 
 (defun terminal (term-name)
     "enlarge window by 10."
@@ -294,6 +297,7 @@
     (setq term-name (concat "*" term-name "*"))
     (generate-new-buffer-name term-name)
     (vterm term-name))
+(global-set-key (kbd "C-c t") 'terminal)
 ;; auto update package
 
 (use-package auto-package-update
