@@ -381,6 +381,11 @@
   (setq nmawaqit-latlon-values '("51.071658" "13.674561"))
   (nmawaqit-mode))
 
+(use-package nspace
+  :ensure nil
+  :config
+  (nspace-mode))
+
 
 (load-if-exists "~/.emacs.d/work.el")
 
