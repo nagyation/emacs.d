@@ -2,16 +2,11 @@
 
 (load "~/.emacs.d/sanemacs.el" nil t)
 
-;;; Your configuration goes below this line.
-;;; use-package is already loaded and ready to go!
-;;; use-package docs: https://github.com/jwiegley/use-package
-
-
 ;; mac specific
 (when (eq system-type `darwin)
   (setq mac-command-modifier 'meta))
 
-;; ========== mode line ==========
+;; ivy
 (use-package ivy
   :diminish (ivy-mode . "")
   :init (ivy-mode 1) ; globally at startup
@@ -45,6 +40,8 @@
    :map minibuffer-local-map
    ("C-r" . counsel-minibuffer-history)))
 
+
+;; which-key
 (use-package which-key
   :init (which-key-mode))
 
@@ -397,6 +394,22 @@
 
 (column-number-mode t)
 (setq mode-line-position (list "%lL %cC"))
+
+;; GPG
+
+;; let's get encryption established
+(setenv "GPG_AGENT_INFO" nil)  ;; use emacs pinentry
+(setq auth-source-debug t)
+
+(setq epg-gpg-program "gpg2")  ;; not necessary
+(require 'epa-file)
+(epa-file-enable)
+(setq epa-pinentry-mode 'loopback)
+(setq epg-pinentry-mode 'loopback)
+(use-package pinentry
+  :ensure t
+  :config
+  (pinentry-start))
 
 
 (message "init is loaded correctly, you are awesome!")
