@@ -396,6 +396,18 @@
   :config
   (nspace-mode))
 
+(use-package tab-bar
+  :config
+  (setq tab-bar-select-tab-modifiers 'super)
+  (setq tab-bar-tab-hints t)
+  ;; add time to the top left
+  (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
+  (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
+  (add-to-list 'tab-bar-format 'mode-line-misc-info 'append)
+  (setq display-time-format "%a %e %b %R")
+  (setq display-time-interval 1)
+  (display-time-mode 1))
+
 
 (load-if-exists "~/.emacs.d/work.el")
 
