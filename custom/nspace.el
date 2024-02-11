@@ -42,6 +42,10 @@
 
 (defvar nspace-buffers 'nil)
 
+(defcustom nspace-ask-before-kill t
+  "Should nspace ask before killing the to be closed tab's buffers?"
+  :type 'boolean)
+
 (defcustom nspace-global-buffers
   '("*Messages*" "*scratch*" "*Backtrace*"
     "*Warnings*" "*Buffer List*" "*Help*")
@@ -51,12 +55,17 @@
 (defun nspace-filter (bname)
   "Filters ivy switch buffer, BNAME is buffer name to match."
   (unless (member bname nspace-global-buffers)
-    (unless (member bname (assoc (tab-bar--current-tab-index) nspace-buffers)) 't)))
+    (unless (member
+	     bname
+	     (assoc (tab-bar--current-tab-index) nspace-buffers))
+      't)))
 
 (defun nspace-add-buffers (buffers)
   "Add list of BUFFERS to the current tab list."
   (setf (alist-get (tab-bar--current-tab-index) nspace-buffers)
-	(append (alist-get (tab-bar--current-tab-index) nspace-buffers) buffers)))
+	(append
+	 (alist-get (tab-bar--current-tab-index) nspace-buffers)
+	 buffers)))
 
 (defun nspace-start-buffers ()
   "Fill the nspace-buffer variable."
@@ -65,7 +74,8 @@
 (defun nspace-remove-buffer-from-tabs (buffer)
   "Remove a BUFFER from all tabs."
   (dolist (elt nspace-buffers)
-    (setf (alist-get (car elt) nspace-buffers) (delete buffer (alist-get (car elt) nspace-buffers)))))
+    (setf (alist-get (car elt) nspace-buffers)
+	  (delete buffer (alist-get (car elt) nspace-buffers)))))
 
 (defun nspace-add-current-buffer-on-window-change (win)
   "Add buffer to the tab local list of buffers, and remove it from other tabs.
@@ -77,7 +87,7 @@ WIN is not used for now."
 
 (defun nspace-remove-and-shift-tabs (tab)
   "Remove TAB from the alist of buffers and shift."
-  (assoc-delete-all tab nspace-buffers)
+  (setq nspace-buffers (assoc-delete-all tab nspace-buffers))
   (setq nspace-buffers (mapcar (lambda (elt)
 				 (if (> (car elt) tab)
 				     (cons (1- (car elt)) (cdr elt))
@@ -88,13 +98,16 @@ WIN is not used for now."
   "Kill space which is tab and buffers.
 KILL-TAB used to kill certain tab and its buffers."
   (or kill-tab (setq kill-tab (tab-bar--current-tab-index)))
-  (let ((buffer-names (cdr (assoc kill-tab nspace-buffers))))
-    (mapc (lambda (bname)
-	    (unless (member bname nspace-global-buffers)
-	      (let ((buffer (get-buffer bname)))
-		(when buffer
-		  (kill-buffer buffer)))))
-	  buffer-names))
+  (when (or (not nspace-ask-before-kill)
+	    (y-or-n-p "Should nspace kill the buffers also?"))
+    (let ((buffer-names (cdr (assoc kill-tab nspace-buffers))))
+      (mapc (lambda (bname)
+	      (unless (member bname nspace-global-buffers)
+		(let ((buffer (get-buffer bname)))
+		  (when buffer
+		    (kill-buffer buffer)))))
+	    buffer-names))
+    (message "nspace killed associated buffers"))
   (nspace-remove-and-shift-tabs kill-tab))
 
 (defun nspace-kill-on-tab-close (tab last)
