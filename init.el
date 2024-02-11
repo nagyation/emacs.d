@@ -288,13 +288,26 @@
   (setq vterm-max-scrollback 10000)
   (setq vterm-kill-buffer-on-exit 'nil))
 
+(defun show-latest-terminal ()
+  "Show the latest terminal if exists, otherwise create a new terminal"
+  (interactive)
+  (let ((to-show-term (car (last (match-buffers "\*term")))))
+    (if to-show-term
+	(progn
+	  (select-window (split-window-vertically 'nil (selected-window)))
+	  (switch-to-buffer to-show-term))
+      (call-interactively #'terminal))))
+
 (defun terminal (term-name)
-    "enlarge window by 10."
-    (interactive (list (read-string "Enter the name of the terminal: " "term")))
-    (setq term-name (concat "*" term-name "*"))
+  "enlarge window by 10."
+  (interactive (list (read-string "Enter the name of the terminal: " "term")))
+  (let ((term-name (concat "*" term-name "*")))
+    (select-window (split-window-vertically 'nil (selected-window)))
     (generate-new-buffer-name term-name)
-    (vterm term-name))
-(global-set-key (kbd "C-c t") 'terminal)
+    (vterm term-name)))
+
+(global-set-key (kbd "C-c T") 'terminal)
+(global-set-key (kbd "C-c t") 'show-latest-terminal)
 ;; auto update package
 
 (use-package auto-package-update
