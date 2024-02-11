@@ -28,15 +28,13 @@
 ;; nspace rely uses ivy ignore and tabs to filters buffers per tabs
 
 ;; FIXME: open file from dired don't run the hook
+;; FIXME: open file from tags don't add the buffer automatically
 
 ;;; Code:
 
 (require 'ivy)
 
 (require 'tab-bar)
-(setq tab-bar-new-tab-choice "*scratch*")
-(setq tab-bar-new-tab-to 'rightmost)
-
 
 (defgroup nspace nil
   "Use tabs as basic workspace."
@@ -117,6 +115,10 @@ LAST not used."
 		  'nspace-kill-on-tab-close)
 	(add-to-list 'ivy-ignore-buffers #'nspace-filter)
 	(nspace-start-buffers)
+	(setq tab-bar-new-tab-choice "*scratch*")
+	(setq tab-bar-new-tab-to 'rightmost)
+	(setq ivy-use-ignore-default 'always)
+	(tab-bar-mode t)
 	(message "nspace-mode enabled"))
     (progn
       (remove-hook 'window-selection-change-functions
@@ -125,6 +127,10 @@ LAST not used."
 		   'nspace-kill-on-tab-close)
       (setq ivy-ignore-buffers
 	    (delq #'nspace-filter ivy-ignore-buffers))
+      ;; return default values back to defaults
+      (setq tab-bar-new-tab-choice t)
+      (setq tab-bar-new-tab-to 'righ)
+      (setq ivy-use-ignore-default t)
       (message "nspace-mode disabled"))))
 
 (provide 'nspace)
